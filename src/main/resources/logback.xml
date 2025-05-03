@@ -1,0 +1,35 @@
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{requestUUID}] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="LogFile"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGHOME}/projects/logs/CodeDeploy.log</file>
+        <!--            <encoder-->
+        <!--                    class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
+        <!--                <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level : %msg%n-->
+        <!--                </Pattern>-->
+        <!--            </encoder>-->
+
+        <!-- Setting up a rolling policy with rolling done
+              daily and when file size is 10MB-->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{requestUUID}] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>CodeDeploy-%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFileNamingAndTriggeringPolicy">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="LogFile"/>
+    </root>
+</configuration>
