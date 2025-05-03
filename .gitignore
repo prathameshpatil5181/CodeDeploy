@@ -6,6 +6,8 @@ target/
 *.pem
 .pem
 
+.run/
+
 ### STS ###
 .apt_generated
 .classpath

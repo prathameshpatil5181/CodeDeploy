@@ -11,15 +11,15 @@ public class Constants {
     public static  String AMI_ID = "ami-0e35ddab05955cf57";
 
 
-//    @Value("${app.aws.secretKey}")
-//    private  String SECRET_KEY ;
-//
-//    @Getter
-//    private Region region = Region.AP_SOUTH_1 ;
-//
-//
-//    @Value("${app.aws.accessKey}")
-//    private String ACCESS_KEY;s
+    @Value("${app.aws.secretKey}")
+    private  String SECRET_KEY ;
+
+    @Getter
+    private Region region = Region.AP_SOUTH_1 ;
+
+
+    @Value("${app.aws.accessKey}")
+    private String ACCESS_KEY;
 
     public Constants() {
         System.out.println("Constants constructor called");
