@@ -22,6 +22,9 @@ public class AwsTest {
     private Region region = Region.AP_SOUTH_1 ;
 
 
+    @Autowired
+    private Constants consts;
+
 
     @Nested
     public class TestGetEc2DetailsClass{
@@ -61,6 +64,14 @@ public class AwsTest {
             Aws aws = new Aws(consts.getSecretKey(),consts.getAccessKey(),region);
             assertDoesNotThrow(()->aws.createEC2InstanceAsyncImpl("fristRemoteInstance"));
         }
+    }
+
+    @Test
+    public void  TestCreateSshKeyPairClass() {
+
+        Aws aws = new Aws(consts.getSecretKey(),consts.getAccessKey(),region);
+        assertDoesNotThrow(()->aws.createSshKeyPair("secondPair"));
+
     }
 
 

@@ -4,6 +4,7 @@ import Utilities.Pair;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ClientChannel;
 import org.apache.sshd.client.channel.ClientChannelEvent;
+import org.apache.sshd.client.future.ConnectFuture;
 import org.apache.sshd.client.session.ClientSession;
 
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
@@ -33,10 +34,18 @@ public class SshSessionManager {
         try {
             if(ssh == null || session==null || session.isClosed()) {
                 ssh = SshClient.setUpDefaultClient();
-                ssh.start();
-                session = ssh.connect(userName, host, port).verify(7000).getSession();
                 FileKeyPairProvider fileKeyPairProvider = new FileKeyPairProvider(Paths.get(keyFile));
-                session.setKeyIdentityProvider(fileKeyPairProvider);
+                ssh.setKeyIdentityProvider(fileKeyPairProvider);
+                ssh.start();
+
+
+                session = ssh.connect(userName, host, port).verify(7000).getSession();
+
+//                session.setKeyIdentityProvider(fileKeyPairProvider);
+//                session.addPublicKeyIdentity(fileKeyPairProvider);
+                session.auth().verify(7000);
+
+//                session = ssh.connect(userName, host, port).verify(7000).getSession();
 
                 LoggingClass.logMessage(SshSessionManager.class,"createConnection","Connection created ");
             }
@@ -69,10 +78,12 @@ public class SshSessionManager {
                      ByteArrayOutputStream err = new ByteArrayOutputStream();
                      ClientChannel channel = session.createExecChannel(command)) {
 
+                    System.out.println("hii");
                     channel.setOut(out);
                     channel.setErr(err);
                     channel.open().verify(5, TimeUnit.SECONDS);
-                    channel.waitFor(Collections.singleton(ClientChannelEvent.CLOSED), TimeUnit.SECONDS.toMillis(5000));
+                    System.out.println(channel.isOpen());
+                    channel.waitFor(Collections.singleton(ClientChannelEvent.CLOSED), TimeUnit.SECONDS.toMillis(8000));
 
                     if (err.size() > 0) {
                         LoggingClass.logError(SshSessionManager.class,"runCommands",err.toString());
@@ -110,9 +121,9 @@ public class SshSessionManager {
     }
 
 
-    public Pair<String,String> getAndProcessKey(){
+    public Pair<String,String> getAndProcessKey(String keyFile) {
         try {
-           String value = Files.readString(Paths.get("src/main/resources/static/first.pem"));
+           String value = Files.readString(Paths.get(keyFile));
 
             System.out.println("Value: " + value);
             return new Pair<String,String>("first",value);

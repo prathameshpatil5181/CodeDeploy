@@ -1,11 +1,14 @@
 package org.orbyte.codedeploy.Deployment.Cloud.aws.src;
 
 
+import Utilities.AwsKeyPairStore;
 import org.orbyte.codedeploy.Constants;
 import org.orbyte.codedeploy.Log.LoggingClass;
 
 import org.orbyte.codedeploy.Deployment.Cloud.aws.interfaces.InitAws;
 
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ec2.Ec2AsyncClient;
 import software.amazon.awssdk.services.ec2.Ec2Client;
@@ -16,15 +19,11 @@ import java.util.concurrent.CompletableFuture;
 
 public class Aws extends InitAws {
 
-
-
-
-    private LoggingClass logger = new LoggingClass();
-    private String amiId = Constants.AMI_ID;
+    private final String amiId = Constants.AMI_ID;
 
     public Aws(String secretKey, String accessKey, Region region) {
         super(secretKey,region, accessKey);
-        logger.logDebug(InitAws.class,"aws","Constructor with region");
+        LoggingClass.logDebug(InitAws.class,"aws","Constructor with region");
 
     }
 
@@ -46,7 +45,7 @@ public class Aws extends InitAws {
                 }
             }
         } catch (Exception e) {
-            logger.logError(InitAws.class, "getEc2Details", e.getMessage());
+            LoggingClass.logError(InitAws.class, "getEc2Details", e.getMessage());
             throw new RuntimeException(e);
         }
 
@@ -92,6 +91,9 @@ public class Aws extends InitAws {
         return "";
     }
 
+
+    ///  creates the ec2 instance asynchronously
+
     public String createEC2InstanceAsyncImpl( String name ) {
 
         Ec2AsyncClient ec2 = getAsyncEc2Client();
@@ -111,7 +113,7 @@ public class Aws extends InitAws {
 
               if(error==null){
                   response.instances().forEach(instance -> {
-                      logger.logMessage(Aws.class,"createEC2InstanceAsyncImpl","Instance with ID is " + instance.instanceId() + " created with state" +  instance.state().name());
+                      LoggingClass.logMessage(Aws.class,"createEC2InstanceAsyncImpl","Instance with ID is " + instance.instanceId() + " created with state" +  instance.state().name());
 
 
                       Tag tag = Tag.builder()
@@ -133,7 +135,7 @@ public class Aws extends InitAws {
           });
         } catch (Exception e) {
 
-            logger.logError(InitAws.class, "createEC2InstanceAsyncImpl", e.getMessage());
+            LoggingClass.logError(InitAws.class, "createEC2InstanceAsyncImpl", e.getMessage());
         }
 
         CompletableFutureResponse.join();
@@ -142,9 +144,68 @@ public class Aws extends InitAws {
         return "";
     }
 
-    public String createSshKeyPair(){
 
-        return "";
+    public void createSecurityGroup(String groupName) {
+
+        try {
+            Ec2Client ec2 = getAmazonEc2();
+
+            DescribeVpcsResponse describeVpcsResponse = ec2.describeVpcs();
+            int  count = 0;
+            describeVpcsResponse.vpcs().forEach(vpc -> {
+                System.out.println("vpc "+count + " : " + vpc.vpcId());
+            });
+
+//            CreateSecurityGroupRequest createSecurityGroupRequest = CreateSecurityGroupRequest.builder()
+//                    .groupName(groupName)
+//                    .description("Security group for " + groupName)
+//                    .vpcId("vpc-12345678") // Replace with your VPC ID
+//                    .build();
+//
+//            CreateSecurityGroupResponse createSecurityGroupResponse = ec2.createSecurityGroup(createSecurityGroupRequest);
+//
+//            System.out.println("Created security group with ID: " + createSecurityGroupResponse.groupId());
+
+        } catch (AwsServiceException e) {
+            LoggingClass.logError(InitAws.class, "createSecurityGroup", e.getMessage());
+            throw new RuntimeException(e);
+        } catch (SdkClientException e) {
+            LoggingClass.logError(InitAws.class, "createSecurityGroup", e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /// creates the ssh key pair
+
+    public AwsKeyPairStore createSshKeyPair(String keyName){
+
+        try {
+            Ec2Client ec2 = getAmazonEc2();
+
+            CreateKeyPairRequest keyPairRequest = CreateKeyPairRequest.builder()
+                    .keyName(keyName)
+                    .build();
+
+
+            CreateKeyPairResponse keyPairResponse = ec2.createKeyPair(keyPairRequest);
+
+            AwsKeyPairStore awsKeyPairStore = new AwsKeyPairStore(
+                    keyPairResponse.keyName(),
+                    keyPairResponse.keyFingerprint(),
+                    keyPairResponse.keyMaterial()
+            );
+
+            LoggingClass.logMessage(Aws.class,"createSshKeyPair","Key pair created : " + awsKeyPairStore.toString());
+
+            return awsKeyPairStore;
+        } catch (AwsServiceException e) {
+            LoggingClass.logError(InitAws.class, "createSshKeyPair", e.getMessage());
+            throw new RuntimeException(e);
+        } catch (SdkClientException e) {
+            LoggingClass.logError(InitAws.class, "createSshKeyPair", e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
 

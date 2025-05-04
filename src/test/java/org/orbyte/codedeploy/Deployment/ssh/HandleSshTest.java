@@ -24,8 +24,10 @@ public class HandleSshTest {
 
         // Call the method to be tested
 
+        String path = "src/main/resources/static/first.pem";
 
-        assertDoesNotThrow(sshSessionManager::getAndProcessKey);
+
+        assertDoesNotThrow(()->sshSessionManager.getAndProcessKey (path));
 
         // Add assertions to verify the expected behavior
         // For example, you can check if the SSH connection was established successfully
@@ -40,7 +42,7 @@ public class HandleSshTest {
         String path = "src/main/resources/static/first.pem";
 
         sshSessionManager.createConnection(userName, host, port, path);
-        assertEquals("", sshSessionManager.runCommands("test"));
+        assertEquals("", sshSessionManager.runCommands("echo hello"));
     }
 
 }

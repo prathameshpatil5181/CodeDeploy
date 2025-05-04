@@ -17,7 +17,7 @@ public class LoggingClass {
         logger.info("class: {} | function:{} | {}",c.toString(),Function,Message);
     }
 
-    public void logDebug(Class c, String Function,String Message){
+    public static void logDebug(Class c, String Function, String Message){
         logger.debug("class: {} | function:{} | {}",c.toString(),Function,Message);
     }
 
