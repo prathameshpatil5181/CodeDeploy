@@ -8,7 +8,7 @@ import software.amazon.awssdk.regions.Region;
 @Component
 public class Constants {
 
-    public static  String AMI_ID = "ami-0e35ddab05955cf57";
+    public static  String AMI_ID = "ami-02d26659fd82cf299";
 
 
     @Value("${app.aws.secretKey}")
@@ -37,7 +37,7 @@ public class Constants {
 
 
     public String getAccessKey() {
-        System.out.println(this.ACCESS_KEY);
+//        System.out.println(this.ACCESS_KEY);
         return this.ACCESS_KEY;
     }
 

@@ -1,4 +1,4 @@
-package Utilities;
+package org.orbyte.codedeploy.Utilities;
 
 public class Pair<T,V> {
     private T key;

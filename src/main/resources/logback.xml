@@ -28,7 +28,7 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
     </appender>
-    <root level="INFO">
+    <root level="${LOGLEVEL}">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="LogFile"/>
     </root>

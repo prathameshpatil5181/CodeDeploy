@@ -50,7 +50,7 @@ public class AwsTest {
         @Test
         public void createEC2InstanceTest(){
             Aws aws = new Aws(consts.getSecretKey(),consts.getAccessKey(),region);
-            assertDoesNotThrow(()->aws.createEC2Instance("fristRemoteInstance"));
+            assertDoesNotThrow(()->aws.createEC2Instance("fristRemoteInstance","test","test"));
         }
     }
 
@@ -62,7 +62,7 @@ public class AwsTest {
         @Test
         public void createEC2InstanceTest(){
             Aws aws = new Aws(consts.getSecretKey(),consts.getAccessKey(),region);
-            assertDoesNotThrow(()->aws.createEC2InstanceAsyncImpl("fristRemoteInstance"));
+            assertDoesNotThrow(()->aws.createEC2Instance("fristRemoteInstance","test","test"));
         }
     }
 
@@ -75,6 +75,18 @@ public class AwsTest {
     }
 
 
+    @Test
+    public void createSecurityGroupTest(){
+        Aws aws = new Aws(consts.getSecretKey(),consts.getAccessKey(),region);
 
+        aws.createSecurityGroup("securityGroup");
+    }
+
+//    @Test
+//    public void checkSystemStatusTest(){
+//        Aws aws = new Aws(consts.getSecretKey(),consts.getAccessKey(),region);
+//
+//        aws.checkStatus();
+//    }
 
 }

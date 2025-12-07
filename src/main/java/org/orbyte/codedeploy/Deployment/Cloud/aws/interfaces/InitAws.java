@@ -36,14 +36,14 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
     public Ec2Client getAmazonEc2(){
 
        if(amazonEc2==null){
-          loggingClass.logMessage(InitAws.class,"getAmazonEc2","Creating new Ec2 client");
+          LoggingClass.logMessage(InitAws.class,"getAmazonEc2","Creating new Ec2 client");
 
            try {
                StaticCredentialsProvider credentials =  StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKeyId,secretAccessKey));
                amazonEc2 = Ec2Client.builder().credentialsProvider(credentials).region(region).build();
                return amazonEc2;
            } catch (Exception e) {
-              loggingClass.logError(InitAws.class,"getAmazonEc2","Error in creating ec2 client");
+              LoggingClass.logError(InitAws.class,"getAmazonEc2","Error in creating ec2 client");
                throw new RuntimeException(e);
            }
        }
@@ -67,6 +67,18 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
             }
         }
         return amazonEc2Async;
+    }
+
+    public void closeEc2Client() {
+        if (amazonEc2 != null) {
+            try {
+                amazonEc2.close();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            amazonEc2 = null;
+            loggingClass.logMessage(InitAws.class, "closeEc2Client", "Ec2 client closed successfully");
+        }
     }
 
 }

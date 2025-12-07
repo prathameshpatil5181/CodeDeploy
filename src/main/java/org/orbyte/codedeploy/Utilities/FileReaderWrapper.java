@@ -1,4 +1,4 @@
-package Utilities;
+package org.orbyte.codedeploy.Utilities;
 
 import org.springframework.stereotype.Component;
 
