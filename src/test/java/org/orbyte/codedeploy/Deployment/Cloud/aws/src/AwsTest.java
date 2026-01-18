@@ -21,7 +21,7 @@ public class AwsTest {
 
     private Region region = Region.AP_SOUTH_1 ;
 
-
+        
     @Autowired
     private Constants consts;
 
