@@ -1,0 +1,14 @@
+.slogan {
+  color: white;
+  text-transform: uppercase;
+  padding: 1rem 0 0 1rem;
+  font-weight: 700;
+
+  @media (min-width: 768px) {
+    font-size: 2rem;
+  }
+
+  .text2 {
+    color: #6ea8fe;
+  }
+}
